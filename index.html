@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<base target="_top">
+<title>66大算</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+:root{
+  --paper:#F6F6F2; --card:#FFFFFF; --ink:#1E2226; --ink-2:#565C63; --line:#E2E2DB; --key:#EEEEE8; --key-press:#DCDCD3; --mask:rgba(246,246,242,.78);
+  --seal:#D2463A;
+  --indigo:#2C4A7A; --indigo-ink:#FFFFFF; --indigo-soft:#E6ECF5;
+  --jade:#2F7D5B; --jade-soft:#E3F1EA; --amber:#A8660F; --amber-soft:#FBEFD9;
+  --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#15181B; --card:#1E2226; --ink:#ECEBE6; --ink-2:#A3A8AE; --line:#30353A; --key:#2A2F34; --key-press:#3A4046; --mask:rgba(21,24,27,.80);
+    --seal:#E46A5E;
+    --indigo:#8FB0E3; --indigo-ink:#10151C; --indigo-soft:#243248;
+    --jade:#6CC39A; --jade-soft:#1D3329; --amber:#E8AE5A; --amber-soft:#3A2D18;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#15181B; --card:#1E2226; --ink:#ECEBE6; --ink-2:#A3A8AE; --line:#30353A; --key:#2A2F34; --key-press:#3A4046; --mask:rgba(21,24,27,.80);
+  --seal:#E46A5E;
+  --indigo:#8FB0E3; --indigo-ink:#10151C; --indigo-soft:#243248;
+  --jade:#6CC39A; --jade-soft:#1D3329; --amber:#E8AE5A; --amber-soft:#3A2D18;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:18px;line-height:1.5;margin:0;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:480px;margin:0 auto;padding-inline:16px;padding-block:14px 28px;display:flex;flex-direction:column;gap:12px}
+header{display:flex;flex-direction:column;gap:8px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+h1{font-family:var(--serif);font-weight:900;font-size:26px;margin:0;letter-spacing:.06em}
+.brand{display:flex;flex-direction:column;gap:0}
+.tagline{font-size:14px;color:var(--ink-2);letter-spacing:.08em}
+h1 .seal{display:inline-grid;place-items:center;width:1.25em;height:1.25em;margin-right:.3em;background:var(--seal);color:#fff;font-size:.8em;border-radius:4px;vertical-align:.08em}
+.datebar{display:flex;align-items:center;gap:6px;color:var(--ink-2);font-size:15px}
+.datebar button{background:none;border:1px solid var(--line);color:var(--ink-2);width:32px;height:32px;border-radius:8px;font-size:16px;cursor:pointer}
+.datebar button:disabled{opacity:.35;cursor:default}
+.dots{display:flex;gap:8px}
+.dot{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:14px;color:var(--ink-2);background:var(--card);font-variant-numeric:tabular-nums;padding:0;}
+.dot.cur{border-color:var(--indigo);color:var(--indigo);font-weight:700}
+.dot.first,.dot.retry{background:var(--jade);border-color:var(--jade);color:var(--card)}
+.dot.shown{background:var(--amber);border-color:var(--amber);color:var(--card)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.kind{align-self:flex-start;font-size:14px;font-weight:700;letter-spacing:.12em;color:var(--indigo);background:var(--indigo-soft);padding:2px 10px;border-radius:999px}
+.ctx{font-size:18px;color:var(--ink-2);text-align:center;min-height:1.5em;text-wrap:balance}
+.eq{font-family:var(--serif);font-weight:900;font-size:44px;line-height:1.2;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:.04em;display:flex;justify-content:center;align-items:center;gap:.3em;flex-wrap:wrap}
+.ans{min-width:2.6em;padding:0 .2em;border-bottom:4px solid var(--indigo);color:var(--indigo);text-align:center}
+.ans.empty{color:var(--line)}
+.ans.ok{border-color:var(--jade);color:var(--jade)}
+.ans.bad{border-color:var(--amber);color:var(--amber);animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.fb{min-height:28px;text-align:center;font-weight:700;font-size:18px}
+.fb.ok{color:var(--jade)} .fb.bad{color:var(--amber)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pad button{font:inherit;font-size:30px;font-weight:700;min-height:62px;border:0;border-radius:12px;background:var(--key);color:var(--ink);cursor:pointer;font-variant-numeric:tabular-nums;touch-action:manipulation}
+.pad button:active{background:var(--key-press)}
+.pad .del{font-size:20px;color:var(--ink-2)}
+.pad .go{background:var(--indigo);color:var(--indigo-ink);font-size:21px}
+.pad .go:active{filter:brightness(.92)}
+.pad button:disabled{opacity:.4}
+.pad button:focus-visible,.dot:focus-visible,.datebar button:focus-visible,.btn:focus-visible{outline:3px solid var(--indigo);outline-offset:2px}
+.btn{font:inherit;font-size:18px;font-weight:700;border-radius:12px;min-height:56px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;width:100%}
+.btn.primary{background:var(--indigo);border-color:var(--indigo);color:var(--indigo-ink)}
+.summary{display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center}
+.big{font-family:var(--serif);font-size:56px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+.time{color:var(--ink-2);font-size:16px;margin-top:-4px}
+.review{list-style:none;margin:0;padding:0;width:100%;display:flex;flex-direction:column;gap:6px;text-align:left}
+.review li{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--line);border-radius:10px}
+.review .q{font-family:var(--serif);font-weight:700;font-size:22px;font-variant-numeric:tabular-nums}
+.review .q em{font-style:normal;color:var(--seal);font-weight:900}
+.review .c{display:block;font-family:var(--sans);font-size:14px;font-weight:400;color:var(--ink-2)}
+.tag{font-size:13px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.tag.first,.tag.retry{background:var(--jade-soft);color:var(--jade)}
+.tag.shown{background:var(--amber-soft);color:var(--amber)}
+.tag.todo{color:var(--ink-2)}
+.move{width:100%;display:flex;flex-direction:column;gap:2px;padding:14px 16px;border-radius:12px;background:var(--jade-soft);color:var(--jade);text-align:center}
+.move .move-k{font-size:13px;font-weight:700;letter-spacing:.12em}
+.move strong{font-size:22px;font-family:var(--serif);font-weight:900;color:var(--ink)}
+.move span:last-child{font-size:15px;color:var(--ink-2)}
+#cel{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:var(--mask);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);cursor:pointer}
+#cel.show,#cel.hide{display:grid}
+#cel.show{animation:fadeIn .18s ease-out}
+#cel.hide{animation:fadeOut .22s ease-in forwards}
+.cel-box{position:relative;width:min(92vw,380px);aspect-ratio:1;max-width:100%;display:grid;place-items:center}
+.cel-text{font-family:var(--serif);font-weight:900;font-size:clamp(52px,16vw,76px);color:var(--jade);letter-spacing:.06em;text-shadow:0 3px 0 var(--card),0 6px 18px rgba(0,0,0,.12);animation:pop .55s cubic-bezier(.2,1.6,.4,1) both;white-space:nowrap}
+.flower{position:absolute;transform:translate(-50%,-50%);animation:bloom .45s cubic-bezier(.2,1.6,.4,1) both;animation-delay:calc(.12s + var(--i)*.06s)}
+.flower svg{display:block;width:100%;height:100%;transform-origin:50% 90%;animation:sway var(--d) ease-in-out infinite alternate}
+@keyframes pop{0%{transform:scale(.2);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
+@keyframes bloom{0%{transform:translate(-50%,-50%) scale(0)}100%{transform:translate(-50%,-50%) scale(1)}}
+@keyframes sway{0%{transform:rotate(-10deg)}100%{transform:rotate(10deg)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeOut{to{opacity:0}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="top">
+      <div class="brand"><h1><span class="seal">算</span>66大算</h1><span class="tagline">每天 6 題，事事都順利</span></div>
+      <div class="datebar">
+        <button id="prevDay" aria-label="前一天">‹</button>
+        <span id="dateLabel"></span>
+        <button id="nextDay" aria-label="後一天">›</button>
+      </div>
+    </div>
+    <div class="dots" id="dots"></div>
+  </header>
+  <main class="card" id="card"></main>
+</div>
+
+<script>
+/* ---- 每天的題目：用日期當種子產生，全家同一天拿到一樣的題目 ---- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function genDay(n){
+  const r=mulberry32(n*9301+49297), ri=(a,b)=>a+Math.floor(r()*(b-a+1));
+  const qs=[];
+  let a=ri(15,68), b=ri(15,68);
+  qs.push({k:"加法", c:"", eq:`${a} + ${b}`, a:a+b});
+  a=ri(41,98); b=ri(12,a-11);
+  qs.push({k:"減法", c:"", eq:`${a} − ${b}`, a:a-b});
+  if (r()<.5){ a=ri(3,9); b=ri(4,9); } else { a=ri(11,19); b=ri(2,5); }
+  qs.push({k:"乘法", c:"", eq:`${a} × ${b}`, a:a*b});
+  const items=[["橘子","顆"],["饅頭","個"],["香蕉","根"],["雞蛋糕","包"],["地瓜","條"],["豆漿","杯"]];
+  const [it,u]=items[ri(0,items.length-1)], up=ri(12,35), qty=ri(2,4);
+  qs.push({k:"買東西", c:`一${u}${it} ${up} 元，買 ${qty} ${u}要幾元？`, eq:`${up} × ${qty}`, a:up*qty});
+  let p=ri(13,97); if(p%10===0) p+=3;
+  qs.push({k:"找零錢", c:`買了 ${p} 元的東西，付 100 元，要找多少？`, eq:`100 − ${p}`, a:100-p});
+  const k=ri(2,6), per=ri(6,25);
+  qs.push({k:"平分", c:`${k*per} 元平分給 ${k} 個人，每人幾元？`, eq:`${k*per} ÷ ${k}`, a:per});
+  return qs;
+}
+
+const MOVES = [
+  ["出門散步 15 分鐘","走路時數數看走了幾步"],
+  ["到附近公園走走 15 分鐘","看看花草樹木，曬點太陽"],
+  ["做 10 分鐘伸展操","轉轉脖子、動動肩膀"],
+  ["原地踏步 5 分鐘","邊踏步邊從 100 倒數"],
+  ["打電話跟家人聊 10 分鐘","考考對方今天 6 題算對了沒"],
+  ["慢慢爬一段樓梯","量力而為，扶好扶手"],
+  ["出門散步 15 分鐘","找一位家人或朋友一起走更好"]
+];
+
+/* ---- 答對了：遮罩＋彈跳字＋晃動小花 ---- */
+function flowerSVG(petal, center){
+  const ps=[0,72,144,216,288].map(a=>`<ellipse cx="50" cy="24" rx="15" ry="22" fill="${petal}" transform="rotate(${a} 50 50)"/>`).join("");
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">${ps}
+    <circle cx="50" cy="50" r="17" fill="${center}"/>
+    <circle cx="44" cy="47" r="2.6" fill="#3B2A1F"/><circle cx="56" cy="47" r="2.6" fill="#3B2A1F"/>
+    <path d="M43 55 Q50 61 57 55" stroke="#3B2A1F" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+    <circle cx="39" cy="53" r="3" fill="#F49BA8" opacity=".7"/><circle cx="61" cy="53" r="3" fill="#F49BA8" opacity=".7"/></svg>`;
+}
+const FLOWERS=[ // 位置(%), 大小(px), 花瓣色, 花心色, 晃動速度
+  {x:8, y:30, s:64, p:"#F7A8B8", c:"#FFD166", d:1.6},
+  {x:80,y:24, s:52, p:"#FFD166", c:"#F79D65", d:1.9},
+  {x:84,y:66, s:70, p:"#B9A7F2", c:"#FFE08A", d:1.7},
+  {x:12,y:70, s:48, p:"#FF9F80", c:"#FFE08A", d:2.1},
+  {x:48,y:12, s:40, p:"#9ED8C3", c:"#FFD166", d:1.8},
+  {x:50,y:84, s:44, p:"#F7A8B8", c:"#FFE08A", d:2.0},
+];
+let celTimer=0, celDone=null;
+function celebrate(text, ms, then){
+  let ov=document.getElementById("cel");
+  if(!ov){ ov=document.createElement("div"); ov.id="cel"; document.body.appendChild(ov); }
+  ov.innerHTML = `<div class="cel-box">${FLOWERS.map((f,i)=>`<span class="flower" style="left:${f.x}%;top:${f.y}%;width:${f.s}px;height:${f.s}px;--d:${f.d}s;--i:${i}">${flowerSVG(f.p,f.c)}</span>`).join("")}
+    <div class="cel-text">${text}</div></div>`;
+  ov.className="show";
+  celDone=then||(()=>{});
+  const end=()=>{ if(!celDone) return; clearTimeout(celTimer); ov.className="hide"; const f=celDone; celDone=null; setTimeout(()=>{ ov.className=""; f&&f(); },220); };
+  ov.onclick=end;
+  clearTimeout(celTimer); celTimer=setTimeout(end, ms);
+}
+
+/* ---- 日期（台北時間） ---- */
+function taipeiToday(){ const d=new Date(Date.now()+8*3600e3); return Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()); }
+const TODAY=taipeiToday(); let viewDay=TODAY;
+const dayIndex=t=>Math.floor(t/86400e3);
+function fmt(t){ const d=new Date(t); return `${d.getUTCMonth()+1}月${d.getUTCDate()}日（${"日一二三四五六"[d.getUTCDay()]}）`; }
+
+function load(k){ try{ return JSON.parse(localStorage.getItem(k)||"null"); }catch(e){ return null; } }
+function save(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+
+const $=id=>document.getElementById(id);
+let qs=[], st=null, cur=0, input="", miss=0, locked=false;
+const key=()=>"mm-"+dayIndex(viewDay);
+const TAG={first:"一次答對",retry:"答對了",shown:"看了答案"};
+
+function openDay(t){
+  summary.fired=false;
+  viewDay=t; qs=genDay(dayIndex(t));
+  st=load(key()) || {res:Array(qs.length).fill(null), start:null, end:null};
+  cur=st.res.findIndex(x=>!x); if(cur<0) cur=qs.length;
+  $("dateLabel").textContent=(t===TODAY?"今天 ":"")+fmt(t);
+  $("nextDay").disabled=t>=TODAY;
+  render();
+}
+
+function dots(){
+  const box=$("dots"); box.innerHTML="";
+  qs.forEach((q,i)=>{
+    const b=document.createElement("span");
+    b.className="dot"+(i===cur?" cur":"")+(st.res[i]?" "+st.res[i]:"");
+    b.textContent=i+1;
+    box.appendChild(b);
+  });
+}
+
+function reset(){ input=""; miss=0; locked=false; }
+
+function render(){
+  dots();
+  if(cur>=qs.length) return summary();
+  const q=qs[cur];
+  $("card").innerHTML=`
+    <span class="kind">${q.k}　${cur+1} / ${qs.length}</span>
+    <div class="ctx">${q.c||"&nbsp;"}</div>
+    <div class="eq"><span>${q.eq} =</span><span class="ans empty" id="ans" aria-live="polite">?</span></div>
+    <div class="fb" id="fb"></div>
+    <div class="pad" id="pad">
+      ${[1,2,3,4,5,6,7,8,9].map(n=>`<button data-n="${n}">${n}</button>`).join("")}
+      <button class="del" data-del aria-label="刪除">⌫ 刪除</button>
+      <button data-n="0">0</button>
+      <button class="go" data-go>確定</button>
+    </div>`;
+  $("pad").onclick=e=>{
+    const b=e.target.closest("button"); if(!b) return;
+    if(b.dataset.n!==undefined) press(b.dataset.n);
+    else if(b.hasAttribute("data-del")) del();
+    else if(b.hasAttribute("data-go")) go();
+  };
+  show();
+}
+
+function show(cls){
+  const el=$("ans"); if(!el) return;
+  el.textContent=input||"?";
+  el.className="ans"+(input?"":" empty")+(cls?" "+cls:"");
+}
+function press(n){
+  if(locked) return;
+  if(st.start==null){ st.start=Date.now(); save(key(),st); }
+  if(input.length>=4) return;
+  input=(input==="0"?"":input)+n; $("fb").textContent=""; $("fb").className="fb"; show();
+}
+function del(){ if(locked) return; input=input.slice(0,-1); show(); }
+
+function go(){
+  if(locked||!input) return;
+  const q=qs[cur], fb=$("fb");
+  if(Number(input)===q.a){
+    locked=true; show("ok");
+    fb.className="fb ok"; fb.textContent = miss===0 ? "答對了！" : "對了！";
+    const r = miss===0?"first":"retry";
+    record(r);
+    setTimeout(()=>celebrate(r==="first"?"答對了！":"對了！", 1400, next), 200);
+  } else {
+    miss++; show("bad");
+    if(miss>=2){
+      locked=true; input=String(q.a);
+      setTimeout(()=>{ show("ok"); fb.className="fb bad"; fb.textContent=`答案是 ${q.a}，下一題加油`; },350);
+      finish("shown", 2200);
+    } else {
+      fb.className="fb bad"; fb.textContent="差一點，再算一次";
+      setTimeout(()=>{ input=""; show(); },500);
+    }
+  }
+}
+function record(r){
+  st.res[cur]=r;
+  if(st.res.every(Boolean)) st.end=Date.now();
+  save(key(),st);
+}
+function next(){ const n=st.res.findIndex(x=>!x); cur=n<0?qs.length:n; reset(); render(); }
+function finish(r, delay){ record(r); setTimeout(next, delay); }
+
+function summary(){
+  const done=st.res.filter(Boolean).length, ok=st.res.filter(x=>x==="first"||x==="retry").length;
+  const all=done===qs.length;
+  let time="";
+  if(all && st.start && st.end){
+    const s=Math.max(1,Math.round((st.end-st.start)/1000));
+    time = s<60 ? `用時 ${s} 秒` : `用時 ${Math.floor(s/60)} 分 ${s%60} 秒`;
+  }
+  const mv=MOVES[dayIndex(viewDay)%MOVES.length];
+  $("card").innerHTML=`<div class="summary">
+    <span class="kind">${viewDay===TODAY?"今日":fmt(viewDay)}成績</span>
+    <div class="big">${ok} / ${qs.length}</div>
+    ${time?`<div class="time">${time}</div>`:""}
+    <div>${ok===qs.length?"6 題全對，六六大順！":"完成今天的 66 大算，事事都順利！"}</div>
+    <div class="move"><span class="move-k">算完了，換動動身體</span><strong>${mv[0]}</strong><span>${mv[1]}</span></div>
+    <ol class="review">${qs.map((q,i)=>`<li><span class="q">${q.eq} = <em>${q.a}</em>${q.c?`<span class="c">${q.c}</span>`:""}</span><span class="tag ${st.res[i]||"todo"}">${TAG[st.res[i]]||"未作答"}</span></li>`).join("")}</ol>
+    <button class="btn" id="again">再算一次</button>
+  </div>`;
+  if(all && ok===qs.length && !summary.fired){ summary.fired=true; setTimeout(()=>celebrate("六六大順！",1800,null),150); }
+  $("again").onclick=()=>{ st={res:Array(qs.length).fill(null),start:null,end:null}; save(key(),st); summary.fired=false; cur=0; reset(); render(); };
+}
+
+addEventListener("keydown",e=>{
+  if(cur>=qs.length) return;
+  if(/^[0-9]$/.test(e.key)) press(e.key);
+  else if(e.key==="Backspace") del();
+  else if(e.key==="Enter") go();
+});
+$("prevDay").onclick=()=>openDay(viewDay-86400e3);
+$("nextDay").onclick=()=>{ if(viewDay<TODAY) openDay(viewDay+86400e3); };
+openDay(TODAY);
+</script>
+
+</body>
+</html>
